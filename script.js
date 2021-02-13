@@ -1,21 +1,35 @@
-var map = L.map('map').setView([37.76,-122.45], 12);
+ require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/FeatureLayer"
+      ], function (Map, MapView, FeatureLayer) {
+        var map = new Map({
+          basemap: "hybrid"
+        });
 
-L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.{ext}', {
-	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-	subdomains: 'abcd',
-	minZoom: 0,
-	maxZoom: 20,
-	ext: 'png'
-}).addTo(map);
+        var view = new MapView({
+          container: "viewDiv",
+          map: map,
 
-$.getJSON("https://raw.githubusercontent.com/gbrunner/adv-python-for-gis-and-rs/master/Week%201/sf_crime.geojson",function(data){
-  var coordinatesOnly = data.features.map(function(feature) {
-    return [feature.geometry.coordinates[1], feature.geometry.coordinates[0], 1];
-  });
+          extent: {
+            // autocasts as new Extent()
+            xmin: -10366387,
+            ymin: 4902434,
+            xmax: -10356735,
+            ymax: 4919960,
+            spatialReference: 102100
+          }
+        });
 
-  var heat = L.heatLayer(coordinatesOnly).addTo(map);
-});
+        /********************
+         * Add feature layer
+         ********************/
 
-
-// make it so the heatmap becomes points at a certain zoom scale
-// hint: https://gis.stackexchange.com/questions/258515/show-hide-markers-depending-on-zoom-level
+        var featureLayer1 = new FeatureLayer({     url:"https://services2.arcgis.com/bB9Y1bGKerz1PTl5/arcgis/rest/services/Commission_prop_footprint/FeatureServer"});
+   
+        map.add(featureLayer1);
+   
+   var featureLayer2 = new FeatureLayer({     url:"https://services2.arcgis.com/bB9Y1bGKerz1PTl5/arcgis/rest/services/Normal_Pool/FeatureServer"});
+   
+        map.add(featureLayer2);
+      });
